@@ -3,13 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web App Preview - No Scrollbar</title>
+    <title>AI-Assisted Learning App</title>
     <style>
         :root {
             --primary-color: #6366f1;
             --secondary-color: #a855f7;
             --accent-color: #06b6d4;
             --bg-dark: #0f172a;
+            --text-slate: #94a3b8;
+        }
+
+        /* Reset & Base Styles */
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
         }
 
         body, html {
@@ -17,13 +24,12 @@
             padding: 0;
             height: 100%;
             overflow-x: hidden;
-            overflow-y: auto; /* Halaman utama tetap bisa scroll */
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
             background-color: var(--bg-dark);
             color: white;
         }
 
-        /* Latar Belakang Canvas */
+        /* Canvas Background */
         #canvas-atom {
             position: fixed;
             top: 0;
@@ -42,124 +48,151 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            gap: 80px;
-            padding: 50px 5%;
+            gap: 60px;
+            padding: 80px 10%;
         }
 
-        /* Styling Handphone */
+        /* Mockup Handphone - Bersih & Modern */
         .phone-wrapper {
             position: relative;
-            perspective: 1000px;
+            flex-shrink: 0;
         }
 
         .phone-case {
-            width: 320px;
-            height: 650px;
-            background: #111;
-            border-radius: 45px;
-            padding: 12px;
-            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.7), 
-                        0 0 25px rgba(99, 102, 241, 0.4);
-            border: 2px solid rgba(255,255,255,0.1);
+            width: 300px;
+            height: 620px;
+            background: #000;
+            border-radius: 40px;
+            padding: 10px;
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.1), 
+                        0 30px 60px rgba(0,0,0,0.8);
             position: relative;
         }
 
-        /* Container Layar (Pemotong Scrollbar) */
+        /* Notch HP */
+        .phone-case::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 20px;
+            background: #000;
+            border-radius: 10px;
+            z-index: 20;
+        }
+
         .screen-container {
             width: 100%;
             height: 100%;
-            border-radius: 35px;
-            overflow: hidden; /* Memotong apapun yang di luar batas */
+            border-radius: 32px;
+            overflow: hidden;
             background: #fff;
             position: relative;
         }
 
-        /* Wrapper Iframe (Teknik Offset) */
-        .iframe-wrapper {
-            width: 105%; /* Dibuat lebih lebar dari container */
-            height: 100%;
-            overflow-y: scroll; /* Izinkan scroll di level ini */
-            overflow-x: hidden;
-            
-            /* Sembunyikan scrollbar standar browser */
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE/Edge */
-        }
-
-        .iframe-wrapper::-webkit-scrollbar {
-            display: none; /* Chrome/Safari */
-            width: 0;
-            height: 0;
-        }
-
-        .iframe-wrapper iframe {
-            width: 95.2%; /* Sesuaikan kembali agar pas dengan lebar asli HP */
+        /* Iframe Styling - No Scrollbar */
+        iframe {
+            width: 100%;
             height: 100%;
             border: none;
             display: block;
+            /* Menyembunyikan scrollbar untuk Chrome, Safari, dan Opera */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
         }
 
-        /* Bagian Teks */
+        iframe::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Konten Teks */
         .text-content {
-            max-width: 500px;
+            max-width: 550px;
         }
 
         .badge {
-            background: rgba(99, 102, 241, 0.2);
+            background: rgba(99, 102, 241, 0.15);
             color: var(--accent-color);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            letter-spacing: 1px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
             border: 1px solid rgba(6, 182, 212, 0.3);
+            display: inline-block;
+            margin-bottom: 20px;
         }
 
         h1 {
-            font-size: 4rem;
-            margin: 20px 0;
-            line-height: 1.1;
-            background: linear-gradient(to right, #fff, var(--primary-color));
+            font-size: 3.5rem;
+            margin: 0 0 20px 0;
+            line-height: 1;
+            font-weight: 800;
+            background: linear-gradient(to bottom right, #fff 30%, var(--primary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        p {
-            color: #94a3b8;
-            line-height: 1.8;
+        .description {
+            color: var(--text-slate);
+            line-height: 1.7;
             font-size: 1.1rem;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
-        .btn-download {
-            position: relative;
-            display: inline-block;
-            padding: 18px 40px;
-            color: white;
+        /* Highlight Section */
+        .process-box {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid var(--primary-color);
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .process-box h3 {
+            margin-top: 0;
+            font-size: 1rem;
+            color: #fff;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 14px 28px;
             text-decoration: none;
             font-weight: 600;
-            border-radius: 12px;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
-            overflow: hidden;
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.95rem;
         }
 
-        .btn-download:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.5);
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
         }
 
         /* Responsif */
-        @media (max-width: 900px) {
+        @media (max-width: 1024px) {
             .main-container {
                 flex-direction: column;
-                height: auto;
-                padding: 100px 20px;
                 text-align: center;
+                padding: 60px 20px;
             }
-            h1 { font-size: 2.5rem; }
+            .btn-group { justify-content: center; }
+            .process-box { border-left: none; border-top: 3px solid var(--primary-color); }
+            h1 { font-size: 2.8rem; }
         }
     </style>
 </head>
@@ -171,34 +204,44 @@
         <div class="phone-wrapper">
             <div class="phone-case">
                 <div class="screen-container">
-                    <div class="iframe-wrapper">
-                        <iframe 
-                            src="https://haqi127.github.io/project_24/" 
-                            title="App Preview">
-                        </iframe>
-                    </div>
+                    <iframe 
+                        src="https://haqi127.github.io/project_24/" 
+                        title="App Preview"
+                        scrolling="no">
+                    </iframe>
                 </div>
             </div>
         </div>
 
         <div class="text-content">
-            <span class="badge">Next-Gen Interface</span>
-            <h1>MOBILE APP DEVELOPMENT</h1>
-            <p>
-                Ciptakan pengalaman digital yang luar biasa dengan integrasi teknologi terkini. 
-                Kami menghadirkan solusi aplikasi mobile yang tidak hanya fungsional, 
-                tetapi juga memiliki estetika visual yang memukau.
+            <span class="badge">AI Collaborative Project</span>
+            <h1>Smart Learning App</h1>
+            
+            <p class="description">
+                Aplikasi pembelajaran inovatif yang dibangun melalui sinergi antara visi manusia dan kecerdasan buatan. Proyek ini mendemonstrasikan bagaimana AI dapat mempercepat proses pengembangan tanpa mengesampingkan kontrol kualitas manual.
             </p>
-            <a href="https://github.com/haqi127/project_24" class="btn-download" target="_blank">Git Hub</a>
+
+            <div class="process-box">
+                <h3>🛠 Workflow Pengembangan:</h3>
+                <p style="font-size: 0.9rem; color: #94a3b8; margin: 0;">
+                    Saya merancang konsep sistem dan struktur data menggunakan <b>JSON</b>. AI berperan sebagai asisten pemrograman untuk menghasilkan <i>boilerplate code</i>, yang kemudian saya <b>koreksi, optimasi, dan validasi</b> secara manual untuk memastikan performa yang sempurna.
+                </p>
+            </div>
+
+            <div class="btn-group">
+                <a href="https://github.com/haqi127/project_24" class="btn btn-primary" target="_blank">
+                    Lihat di GitHub
+                </a>
+            </div>
         </div>
     </div>
 
     <script>
+        /* Animasi Partikel - Tetap dipertahankan karena sudah bagus */
         const canvas = document.getElementById('canvas-atom');
         const ctx = canvas.getContext('2d');
-
         let particles = [];
-        const particleCount = 100;
+        const particleCount = 80;
 
         window.addEventListener('resize', resizeCanvas);
         function resizeCanvas() {
@@ -208,15 +251,13 @@
         resizeCanvas();
 
         class Particle {
-            constructor() {
-                this.init();
-            }
+            constructor() { this.init(); }
             init() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.vx = (Math.random() - 0.5) * 0.8;
-                this.vy = (Math.random() - 0.5) * 0.8;
-                this.radius = Math.random() * 2 + 1;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 1.5 + 1;
             }
             update() {
                 this.x += this.vx;
@@ -227,31 +268,26 @@
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(99, 102, 241, 0.5)';
+                ctx.fillStyle = 'rgba(99, 102, 241, 0.3)';
                 ctx.fill();
             }
         }
 
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
+        for (let i = 0; i < particleCount; i++) { particles.push(new Particle()); }
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
             particles.forEach((p, index) => {
                 p.update();
                 p.draw();
-                
                 for (let j = index + 1; j < particles.length; j++) {
                     const p2 = particles[j];
                     const dx = p.x - p2.x;
                     const dy = p.y - p2.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
-
-                    if (dist < 150) {
+                    if (dist < 120) {
                         ctx.beginPath();
-                        ctx.strokeStyle = `rgba(99, 102, 241, ${1 - dist / 150})`;
+                        ctx.strokeStyle = `rgba(99, 102, 241, ${0.2 - dist / 600})`;
                         ctx.lineWidth = 0.5;
                         ctx.moveTo(p.x, p.y);
                         ctx.lineTo(p2.x, p2.y);
