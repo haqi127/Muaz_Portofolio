@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web App Preview - No Scrollbar</title>
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #a855f7;
+            --accent-color: #06b6d4;
+            --bg-dark: #0f172a;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto; /* Halaman utama tetap bisa scroll */
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: white;
+        }
+
+        /* Latar Belakang Canvas */
+        #canvas-atom {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            gap: 80px;
+            padding: 50px 5%;
+        }
+
+        /* Styling Handphone */
+        .phone-wrapper {
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .phone-case {
+            width: 320px;
+            height: 650px;
+            background: #111;
+            border-radius: 45px;
+            padding: 12px;
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.7), 
+                        0 0 25px rgba(99, 102, 241, 0.4);
+            border: 2px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        /* Container Layar (Pemotong Scrollbar) */
+        .screen-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 35px;
+            overflow: hidden; /* Memotong apapun yang di luar batas */
+            background: #fff;
+            position: relative;
+        }
+
+        /* Wrapper Iframe (Teknik Offset) */
+        .iframe-wrapper {
+            width: 105%; /* Dibuat lebih lebar dari container */
+            height: 100%;
+            overflow-y: scroll; /* Izinkan scroll di level ini */
+            overflow-x: hidden;
+            
+            /* Sembunyikan scrollbar standar browser */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+
+        .iframe-wrapper::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+            width: 0;
+            height: 0;
+        }
+
+        .iframe-wrapper iframe {
+            width: 95.2%; /* Sesuaikan kembali agar pas dengan lebar asli HP */
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        /* Bagian Teks */
+        .text-content {
+            max-width: 500px;
+        }
+
+        .badge {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--accent-color);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin: 20px 0;
+            line-height: 1.1;
+            background: linear-gradient(to right, #fff, var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            color: #94a3b8;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        .btn-download {
+            position: relative;
+            display: inline-block;
+            padding: 18px 40px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 12px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+            overflow: hidden;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Responsif */
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+                height: auto;
+                padding: 100px 20px;
+                text-align: center;
+            }
+            h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="canvas-atom"></canvas>
+
+    <div class="main-container">
+        <div class="phone-wrapper">
+            <div class="phone-case">
+                <div class="screen-container">
+                    <div class="iframe-wrapper">
+                        <iframe 
+                            src="https://haqi127.github.io/project_24/" 
+                            title="App Preview">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-content">
+            <span class="badge">Next-Gen Interface</span>
+            <h1>MOBILE APP DEVELOPMENT</h1>
+            <p>
+                Ciptakan pengalaman digital yang luar biasa dengan integrasi teknologi terkini. 
+                Kami menghadirkan solusi aplikasi mobile yang tidak hanya fungsional, 
+                tetapi juga memiliki estetika visual yang memukau.
+            </p>
+            <a href="https://github.com/haqi127/project_24" class="btn-download" target="_blank">Git Hub</a>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas-atom');
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        const particleCount = 100;
+
+        window.addEventListener('resize', resizeCanvas);
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.init();
+            }
+            init() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.8;
+                this.vy = (Math.random() - 0.5) * 0.8;
+                this.radius = Math.random() * 2 + 1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(99, 102, 241, 0.5)';
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach((p, index) => {
+                p.update();
+                p.draw();
+                
+                for (let j = index + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dx = p.x - p2.x;
+                    const dy = p.y - p2.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 150) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(99, 102, 241, ${1 - dist / 150})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
